@@ -11,7 +11,6 @@ import VerifyEmail from './pages/VerifyEmail';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import OAuthCallback from './pages/OAuthCallback';
-import MockOAuthProvider from './pages/MockOAuthProvider';
 import Boards from './pages/Boards';
 import Board from './pages/Board';
 import ActivityLog from './pages/ActivityLog';
@@ -51,9 +50,6 @@ function App() {
                         <Route path='/auth/callback/google' element={<OAuthCallback />} />
                         <Route path='/auth/callback/github' element={<OAuthCallback />} />
                     </Route>
-
-                    {/* Mock Social OAuth screen */}
-                    <Route path='/auth/mock-provider' element={<MockOAuthProvider />} />
 
                     {/* Public share route — no auth needed */}
                     <Route path='/share/:token' element={<PublicBoard />} />

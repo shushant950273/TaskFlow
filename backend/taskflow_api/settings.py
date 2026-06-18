@@ -129,5 +129,5 @@ GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', '')
 GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET', '')
 GITHUB_CLIENT_ID = os.environ.get('GITHUB_CLIENT_ID', '')
 GITHUB_CLIENT_SECRET = os.environ.get('GITHUB_CLIENT_SECRET', '')
-MOCK_SOCIAL_AUTH = os.environ.get('MOCK_SOCIAL_AUTH', 'True') == 'True'
+MOCK_SOCIAL_AUTH = os.environ.get('MOCK_SOCIAL_AUTH', 'False') == 'True'
 

@@ -121,127 +121,110 @@ export default function VerifyEmail() {
   }
 
   return (
-    <div style={{
-      width: '340px',
-      background: 'var(--tf-surface)',
-      border: '0.5px solid var(--tf-border)',
-      borderRadius: '14px',
-      padding: '28px',
-      boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
-    }}>
-      <div style={{
-        width: '36px', height: '36px',
-        background: 'var(--tf-accent)',
-        borderRadius: '10px',
+    <div className="glass-panel animate-fade-in-up" style={{ width: '380px', maxWidth: '100%' }}>
+      <div className="animate-fade-in-up delay-100" style={{
+        width: '48px', height: '48px',
+        background: 'linear-gradient(135deg, var(--tf-accent) 0%, #8b85fa 100%)',
+        borderRadius: '12px',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        margin: '0 auto 12px'
+        margin: '0 auto 16px',
+        boxShadow: '0 8px 16px var(--tf-accent-glow)'
       }}>
-        <KeyRound size={20} color="#fff" />
+        <Mail size={24} color="#fff" strokeWidth={2.5} />
       </div>
-      
-      <h3 style={{
-        fontFamily: 'var(--font-heading)', fontWeight: 500, fontSize: '16px',
-        textAlign: 'center', marginBottom: '4px', color: 'var(--tf-text)'
+
+      <h3 className="animate-fade-in-up delay-100" style={{
+        fontFamily: 'var(--font-heading)', fontWeight: 600, fontSize: '20px',
+        textAlign: 'center', marginBottom: '6px', color: 'var(--tf-text)'
       }}>
         Verify your email
       </h3>
-      
-      <p style={{
-        fontFamily: 'var(--font-body)', fontSize: '12px', color: 'var(--tf-text-secondary)',
-        textAlign: 'center', marginBottom: '20px'
+
+      <p className="animate-fade-in-up delay-200" style={{
+        fontFamily: 'var(--font-body)', fontSize: '14px', color: 'var(--tf-text-secondary)',
+        textAlign: 'center', marginBottom: '28px'
       }}>
-        {email ? `Enter the 6-digit OTP code sent to ${email}` : 'Enter your email and the 6-digit verification code'}
+        We sent a 6-digit code to <strong>{emailParam || 'your email'}</strong>
       </p>
 
-      <form onSubmit={handleVerify}>
-        {!emailParam && (
-          <div style={{ marginBottom: '10px' }}>
-            <label style={{ display: 'block', fontSize: '11px', color: 'var(--tf-text-secondary)', marginBottom: '5px' }}>
-              Email
-            </label>
-            <input 
-              type="email" 
-              required 
-              value={email} 
-              onChange={e => setEmail(e.target.value)} 
-              placeholder="e.g. you@example.com"
-              style={{ width: '100%', height: '36px' }}
-            />
-          </div>
-        )}
-        
-        <div style={{ marginBottom: '16px' }}>
-          <label style={{ display: 'block', fontSize: '11px', color: 'var(--tf-text-secondary)', marginBottom: '5px' }}>
-            Verification Code (OTP)
+      <form onSubmit={handleVerify} className="animate-fade-in-up delay-300">
+        <div style={{ marginBottom: '24px' }}>
+          <label style={{ display: 'block', fontSize: '12px', fontWeight: 500, color: 'var(--tf-text-secondary)', marginBottom: '8px', textAlign: 'center' }}>
+            Verification Code
           </label>
-          <input 
-            type="text" 
-            required 
+          <input
+            type="text"
+            required
             maxLength={6}
             pattern="\d{6}"
-            value={otp} 
-            onChange={e => setOtp(e.target.value.replace(/\D/g, ''))} 
-            placeholder="123456"
+            className="input-modern"
+            value={otp}
+            onChange={e => setOtp(e.target.value.replace(/\D/g, ''))}
+            placeholder="000000"
             style={{ 
-              width: '100%', 
-              height: '38px', 
-              letterSpacing: '6px', 
+              letterSpacing: '8px', 
               textAlign: 'center',
-              fontSize: '16px',
-              fontWeight: 'bold'
+              fontSize: '20px',
+              fontWeight: 'bold',
+              height: '52px'
             }}
+            autoFocus
           />
         </div>
 
         {error && (
-          <div style={{ color: 'var(--tf-red)', fontSize: '11px', marginBottom: '14px', textAlign: 'center' }}>
+          <div className="animate-fade-in-up" style={{ 
+            background: 'rgba(226, 75, 74, 0.1)', border: '1px solid rgba(226, 75, 74, 0.2)',
+            color: 'var(--tf-red)', fontSize: '12px', padding: '10px 14px', borderRadius: '8px', 
+            marginBottom: '20px', textAlign: 'center' 
+          }}>
             {error}
           </div>
         )}
-        
-        <button 
-          type="submit" 
-          disabled={loading} 
-          style={{
-            width: '100%', height: '36px',
-            background: 'var(--tf-accent)', color: '#fff',
-            fontFamily: 'var(--font-heading)', fontWeight: 500, fontSize: '13px',
-            marginBottom: '14px',
-            opacity: loading ? 0.7 : 1,
-            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'
-          }}
+
+        {successMsg && (
+          <div className="animate-fade-in-up" style={{ 
+            background: 'rgba(29, 158, 117, 0.1)', border: '1px solid rgba(29, 158, 117, 0.2)',
+            color: 'var(--tf-green)', fontSize: '12px', padding: '10px 14px', borderRadius: '8px', 
+            marginBottom: '20px', textAlign: 'center' 
+          }}>
+            {successMsg}
+          </div>
+        )}
+
+        <button
+          type="submit"
+          disabled={loading || verifying}
+          className="btn-modern primary"
+          style={{ marginBottom: '20px' }}
         >
-          {loading ? (
-            <Loader2 size={16} className="animate-spin" />
+          {loading || verifying ? (
+            <><div className="animate-spin" style={{width: '16px', height: '16px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%'}} /> Verifying...</>
           ) : (
-            <>Verify Account <ArrowRight size={14} /></>
+            <>Verify Email <ArrowRight size={16} /></>
           )}
         </button>
       </form>
-
-      {email && (
-        <div style={{ textAlign: 'center', fontSize: '12px', marginBottom: '10px' }}>
-          <button
-            type="button"
-            disabled={resending || cooldown > 0}
-            onClick={handleResend}
-            style={{
-              background: 'transparent',
-              color: cooldown > 0 ? 'var(--tf-text-tertiary)' : 'var(--tf-accent)',
-              fontSize: '11px',
-              fontFamily: 'var(--font-body)',
-              textDecoration: cooldown > 0 ? 'none' : 'underline',
-              cursor: cooldown > 0 ? 'default' : 'pointer',
-              padding: 0
-            }}
-          >
-            {cooldown > 0 ? `Resend code in ${cooldown}s` : "Didn't receive a code? Resend"}
-          </button>
-        </div>
-      )}
-
-      <div style={{ textAlign: 'center', fontSize: '12px', color: 'var(--tf-text-secondary)', marginTop: '20px' }}>
-        Back to <Link to="/login" style={{ color: 'var(--tf-accent)', textDecoration: 'none' }}>Sign in</Link> or <Link to="/register" style={{ color: 'var(--tf-accent)', textDecoration: 'none' }}>Register</Link>
+      <div className="animate-fade-in-up delay-400" style={{ textAlign: 'center', fontSize: '13px', color: 'var(--tf-text-secondary)' }}>
+        Didn't receive the code?{' '}
+        <button
+          type="button"
+          onClick={handleResend}
+          disabled={resending || cooldown > 0}
+          style={{
+            background: 'none', border: 'none',
+            color: 'var(--tf-accent)', cursor: (resending || cooldown > 0) ? 'default' : 'pointer',
+            fontWeight: 500, fontSize: '13px', textDecoration: 'none', opacity: (resending || cooldown > 0) ? 0.7 : 1, transition: 'color 0.2s'
+          }}
+          onMouseOver={e => e.currentTarget.style.color='var(--tf-accent-hover)'} 
+          onMouseOut={e => e.currentTarget.style.color='var(--tf-accent)'}
+        >
+          {resending ? 'Sending...' : cooldown > 0 ? `Resend code in ${cooldown}s` : 'Resend Code'}
+        </button>
+      </div>
+      
+      <div className="animate-fade-in-up delay-500" style={{ textAlign: 'center', fontSize: '12px', color: 'var(--tf-text-secondary)', marginTop: '20px' }}>
+        <Link to="/login" style={{ color: 'var(--tf-text-secondary)', textDecoration: 'underline' }}>Back to login</Link>
       </div>
     </div>
   );

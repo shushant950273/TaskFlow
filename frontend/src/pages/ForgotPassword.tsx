@@ -37,74 +37,72 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div style={{
-      width: '340px',
-      background: 'var(--tf-surface)',
-      border: '0.5px solid var(--tf-border)',
-      borderRadius: '14px',
-      padding: '28px',
-      boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
-    }}>
-      <div style={{
-        width: '36px', height: '36px',
-        background: 'var(--tf-accent)',
-        borderRadius: '10px',
+    <div className="glass-panel animate-fade-in-up" style={{ width: '380px', maxWidth: '100%' }}>
+      <div className="animate-fade-in-up delay-100" style={{
+        width: '48px', height: '48px',
+        background: 'linear-gradient(135deg, var(--tf-accent) 0%, #8b85fa 100%)',
+        borderRadius: '12px',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        margin: '0 auto 12px'
+        margin: '0 auto 16px',
+        boxShadow: '0 8px 16px var(--tf-accent-glow)'
       }}>
-        <Mail size={20} color="#fff" />
+        <Mail size={24} color="#fff" strokeWidth={2.5} />
       </div>
 
-      <h3 style={{
-        fontFamily: 'var(--font-heading)', fontWeight: 500, fontSize: '16px',
-        textAlign: 'center', marginBottom: '4px', color: 'var(--tf-text)'
+      <h3 className="animate-fade-in-up delay-100" style={{
+        fontFamily: 'var(--font-heading)', fontWeight: 600, fontSize: '20px',
+        textAlign: 'center', marginBottom: '6px', color: 'var(--tf-text)'
       }}>
         Forgot your password?
       </h3>
 
-      <p style={{
-        fontFamily: 'var(--font-body)', fontSize: '12px', color: 'var(--tf-text-secondary)',
-        textAlign: 'center', marginBottom: '20px'
+      <p className="animate-fade-in-up delay-200" style={{
+        fontFamily: 'var(--font-body)', fontSize: '14px', color: 'var(--tf-text-secondary)',
+        textAlign: 'center', marginBottom: '28px'
       }}>
         Enter your email and we'll send you a 6-digit reset code
       </p>
 
       {sent ? (
-        <div style={{
+        <div className="animate-fade-in-up delay-300" style={{
           background: 'rgba(29, 158, 117, 0.1)',
           border: '1px solid rgba(29, 158, 117, 0.3)',
-          borderRadius: '8px',
-          padding: '14px',
+          borderRadius: '12px',
+          padding: '20px',
           textAlign: 'center',
-          marginBottom: '20px'
+          marginBottom: '24px'
         }}>
-          <div style={{ fontSize: '22px', marginBottom: '6px' }}>📬</div>
-          <div style={{ fontSize: '13px', color: 'var(--tf-text)', fontWeight: 500, marginBottom: '4px' }}>
+          <div style={{ fontSize: '28px', marginBottom: '12px' }}>📬</div>
+          <div style={{ fontSize: '14px', color: 'var(--tf-text)', fontWeight: 600, marginBottom: '6px' }}>
             Reset code sent!
           </div>
-          <div style={{ fontSize: '11px', color: 'var(--tf-text-secondary)' }}>
+          <div style={{ fontSize: '12px', color: 'var(--tf-text-secondary)', lineHeight: '1.6' }}>
             Check your inbox at <strong>{email}</strong>.<br />Redirecting you now...
           </div>
         </div>
       ) : (
-        <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', fontSize: '11px', color: 'var(--tf-text-secondary)', marginBottom: '5px' }}>
+        <form onSubmit={handleSubmit} className="animate-fade-in-up delay-300">
+          <div style={{ marginBottom: '24px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 500, color: 'var(--tf-text-secondary)', marginBottom: '8px' }}>
               Email address
             </label>
             <input
               type="email"
               required
+              className="input-modern"
               value={email}
               onChange={e => setEmail(e.target.value)}
               placeholder="you@example.com"
-              style={{ width: '100%', height: '36px' }}
               autoFocus
             />
           </div>
 
           {error && (
-            <div style={{ color: 'var(--tf-red)', fontSize: '11px', marginBottom: '14px', textAlign: 'center' }}>
+            <div className="animate-fade-in-up" style={{ 
+              background: 'rgba(226, 75, 74, 0.1)', border: '1px solid rgba(226, 75, 74, 0.2)',
+              color: 'var(--tf-red)', fontSize: '12px', padding: '10px 14px', borderRadius: '8px', 
+              marginBottom: '20px', textAlign: 'center' 
+            }}>
               {error}
             </div>
           )}
@@ -112,26 +110,20 @@ export default function ForgotPassword() {
           <button
             type="submit"
             disabled={loading}
-            style={{
-              width: '100%', height: '36px',
-              background: 'var(--tf-accent)', color: '#fff',
-              fontFamily: 'var(--font-heading)', fontWeight: 500, fontSize: '13px',
-              marginBottom: '14px',
-              opacity: loading ? 0.7 : 1,
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'
-            }}
+            className="btn-modern primary"
+            style={{ marginBottom: '20px' }}
           >
             {loading ? (
-              <><Loader2 size={15} className="animate-spin" /> Sending...</>
+              <><div className="animate-spin" style={{width: '16px', height: '16px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%'}} /> Sending...</>
             ) : (
-              <>Send reset code <ArrowRight size={14} /></>
+              <>Send reset code <ArrowRight size={16} /></>
             )}
           </button>
         </form>
       )}
 
-      <div style={{ textAlign: 'center', fontSize: '12px', color: 'var(--tf-text-secondary)' }}>
-        Remember your password? <Link to="/login" style={{ color: 'var(--tf-accent)', textDecoration: 'none' }}>Sign in</Link>
+      <div className="animate-fade-in-up delay-400" style={{ textAlign: 'center', fontSize: '13px', color: 'var(--tf-text-secondary)' }}>
+        Remember your password? <Link to="/login" style={{ color: 'var(--tf-accent)', fontWeight: 500, textDecoration: 'none', transition: 'color 0.2s' }} onMouseOver={e => e.currentTarget.style.color='var(--tf-accent-hover)'} onMouseOut={e => e.currentTarget.style.color='var(--tf-accent)'}>Sign in</Link>
       </div>
     </div>
   );

@@ -182,15 +182,18 @@ class SocialLoginView(APIView):
         if provider not in ('google', 'github'):
             return Response({'error': f'Unsupported provider: {provider}'}, status=status.HTTP_400_BAD_REQUEST)
 
-        is_mock = getattr(settings, 'MOCK_SOCIAL_AUTH', True)
-        google_creds_missing = provider == 'google' and (not getattr(settings, 'GOOGLE_CLIENT_ID', '') or not getattr(settings, 'GOOGLE_CLIENT_SECRET', ''))
-        github_creds_missing = provider == 'github' and (not getattr(settings, 'GITHUB_CLIENT_ID', '') or not getattr(settings, 'GITHUB_CLIENT_SECRET', ''))
+        is_mock = getattr(settings, 'MOCK_SOCIAL_AUTH', False)
         
-        if is_mock or google_creds_missing or github_creds_missing:
+        if is_mock:
             email = request.data.get('email') or f"mock-{provider}-user@example.com"
             name = request.data.get('name') or f"Mock {provider.capitalize()} User"
             avatar_url = request.data.get('avatar_url') or ""
         else:
+            if provider == 'google' and (not getattr(settings, 'GOOGLE_CLIENT_ID', '') or not getattr(settings, 'GOOGLE_CLIENT_SECRET', '')):
+                return Response({'error': 'Google OAuth credentials are not configured on the server.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            if provider == 'github' and (not getattr(settings, 'GITHUB_CLIENT_ID', '') or not getattr(settings, 'GITHUB_CLIENT_SECRET', '')):
+                return Response({'error': 'GitHub OAuth credentials are not configured on the server.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
             email = None
             name = ""
             avatar_url = ""

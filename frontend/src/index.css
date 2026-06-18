@@ -218,3 +218,136 @@ button {
   animation: spin 1s linear infinite;
 }
 
+/* Modern Auth UI Utilities */
+.glass-panel {
+  background: var(--tf-surface);
+  border: 1px solid var(--tf-border);
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.02) inset;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle glow effect behind the card */
+.glass-panel::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at center, var(--tf-accent-glow) 0%, transparent 60%);
+  opacity: 0.1;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.glass-panel > * {
+  position: relative;
+  z-index: 1;
+}
+
+[data-theme="light"] .glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.input-modern {
+  width: 100%;
+  height: 42px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  background: var(--tf-surface2);
+  border: 1px solid var(--tf-border);
+  border-radius: 10px;
+  color: var(--tf-text);
+  padding: 0 14px;
+  outline: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.input-modern:focus {
+  border-color: var(--tf-accent);
+  box-shadow: 0 0 0 3px var(--tf-accent-glow);
+  background: var(--tf-surface);
+}
+
+.btn-modern {
+  width: 100%;
+  height: 42px;
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  border-radius: 10px;
+  padding: 0 16px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  outline: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-modern.primary {
+  background: linear-gradient(135deg, var(--tf-accent) 0%, #8b85fa 100%);
+  color: #fff;
+  box-shadow: 0 4px 14px var(--tf-accent-glow);
+}
+
+.btn-modern.primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px var(--tf-accent-glow);
+  filter: brightness(1.05);
+}
+
+.btn-modern.primary:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: 0 2px 8px var(--tf-accent-glow);
+}
+
+.btn-modern.primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-modern.ghost {
+  background: transparent;
+  border: 1px solid var(--tf-border);
+  color: var(--tf-text);
+}
+
+.btn-modern.ghost:hover:not(:disabled) {
+  background: var(--tf-surface2);
+  border-color: var(--tf-border-hover);
+  transform: translateY(-1px);
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+.delay-500 { animation-delay: 500ms; }
