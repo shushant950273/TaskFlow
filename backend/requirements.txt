@@ -1,0 +1,14 @@
+Django~=5.0
+djangorestframework
+djangorestframework-simplejwt
+channels
+daphne
+psycopg2-binary
+redis
+django-cors-headers
+python-dotenv
+dj-database-url
+pytest
+pytest-django
+channels-redis
+requests
