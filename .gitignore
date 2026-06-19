@@ -1,5 +1,7 @@
-# Environments
+# ─── Environments / Secrets ───────────────────────────────────────────────
 .env
+.env.local
+.env.*.local
 .venv
 env/
 venv/
@@ -7,7 +9,7 @@ ENV/
 env.bak/
 venv.bak/
 
-# Python
+# ─── Python ───────────────────────────────────────────────────────────────
 __pycache__/
 *.py[cod]
 *$py.class
@@ -31,23 +33,32 @@ share/python-wheels/
 *.egg
 MANIFEST
 
-# Django
+# ─── Django ───────────────────────────────────────────────────────────────
 *.log
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
+staticfiles/
 
-# Node
+# ─── Node ─────────────────────────────────────────────────────────────────
 node_modules/
 npm-debug.log
 yarn-error.log
 yarn-debug.log
 
-# Frontend build
+# ─── Frontend build ───────────────────────────────────────────────────────
 frontend/dist/
 frontend/build/
+frontend/.vite_cache/
 
-# IDEs and OS
+# ─── Debug files ──────────────────────────────────────────────────────────
+backend/*.txt
+backend/reg.json
+backend/test_reg.py
+backend/pytest.ini
+backend/.pytest_cache/
+
+# ─── IDEs and OS ──────────────────────────────────────────────────────────
 .idea/
 .vscode/
 *.swp
