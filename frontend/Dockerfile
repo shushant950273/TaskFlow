@@ -3,9 +3,9 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Install dependencies
+# Install dependencies (ignoring the Windows package-lock to fix EBADPLATFORM for esbuild)
 COPY package*.json ./
-RUN npm install --legacy-peer-deps
+RUN rm -f package-lock.json && npm install --legacy-peer-deps
 
 # Copy source and build
 COPY . .
