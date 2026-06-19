@@ -7,8 +7,8 @@ const isProd = import.meta.env.PROD;
 const fallbackProdUrl = 'https://taskflow-backend-cj9v.onrender.com/api';
 
 const apiClient = axios.create({
-    // Always use the absolute backend URL in production to prevent 404s
-    baseURL: import.meta.env.VITE_API_URL || (isProd ? fallbackProdUrl : '/api'),
+    // Force the correct backend URL in production to prevent user misconfiguration
+    baseURL: isProd ? fallbackProdUrl : (import.meta.env.VITE_API_URL || '/api'),
     headers: {
         'Content-Type': 'application/json',
         'X-Socket-ID': clientSocketId
