@@ -13,7 +13,7 @@ export default function ShareModal({ board, onClose }: ShareModalProps) {
     const qc = useQueryClient();
     const [shareEnabled, setShareEnabled] = useState<boolean>(board?.share_enabled ?? false);
     const [shareUrl, setShareUrl] = useState<string>(
-        board?.share_token ? `http://localhost:5173/share/${board.share_token}` : ''
+        board?.share_token ? `${window.location.origin}/share/${board.share_token}` : ''
     );
     const [copied, setCopied] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
@@ -29,7 +29,7 @@ export default function ShareModal({ board, onClose }: ShareModalProps) {
         mutationFn: () => enableShare(board.id),
         onSuccess: (data) => {
             setShareEnabled(true);
-            const url = `http://localhost:5173/share/${data.board.share_token}`;
+            const url = `${window.location.origin}/share/${data.board.share_token}`;
             setShareUrl(url);
             qc.invalidateQueries({ queryKey: ['board', board.id] });
         },

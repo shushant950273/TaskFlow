@@ -87,9 +87,11 @@ export const disableShare = async (boardId: string) => {
 };
 
 /** Public endpoint — no auth header needed, use raw axios */
+import axios from 'axios';
 export const getPublicBoard = async (token: string) => {
-    const { default: axios } = await import('axios');
-    const res = await axios.get(`http://127.0.0.1:8000/api/share/${token}/`);
-    // Backend wraps in {success, data}
+    const isProd = import.meta.env.PROD;
+    const fallbackProdUrl = 'https://taskflow-backend-cj9v.onrender.com/api';
+    const baseURL = isProd ? fallbackProdUrl : (import.meta.env.VITE_API_URL || '/api');
+    const res = await axios.get(`${baseURL}/share/${token}/`);
     return res.data.data as { board: any; tasks: any[] };
 };
