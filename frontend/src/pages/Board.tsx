@@ -167,13 +167,33 @@ export default function Board() {
 
     const handleAddTask = useCallback(async (colId: string, title: string) => {
         if (!boardId) return;
+
+        // 1. Create a temporary optimistic task so the UI updates instantly
+        const tempId = `temp-${crypto.randomUUID()}`;
+        const optimisticTask = {
+            id: tempId,
+            title,
+            column: colId,
+            priority: 'P2',
+            assignees: [],
+            labels: [],
+            subtask_count: 0,
+            subtask_done_count: 0,
+        };
+        
+        // Instantly add to local state
+        addTask(optimisticTask);
+
         try {
-            const task = await createTask(boardId, { title, column: colId });
-            addTask(task);
-            // Invalidate the cache forcefully to guarantee the UI syncs properly
+            // 2. Perform the actual API call
+            await createTask(boardId, { title, column: colId });
+            
+            // 3. Force React Query to sync the real ID from the server
             queryClient.invalidateQueries({ queryKey: ['tasks', boardId] });
         } catch (err) {
             console.error('Failed to add task', err);
+            // Optionally, we could remove the optimistic task here if it failed
+            queryClient.invalidateQueries({ queryKey: ['tasks', boardId] });
         }
     }, [boardId, addTask, queryClient]);
 
