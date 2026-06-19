@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { useAuthStore } from '../store/useAuthStore';
 import { useToastStore } from '../store/useToastStore';
-import { KeyRound, Loader2, ArrowRight } from 'lucide-react';
+import { Mail, KeyRound, Loader2, ArrowRight } from 'lucide-react';
 
 export default function VerifyEmail() {
   const [searchParams] = useSearchParams();
@@ -182,23 +182,15 @@ export default function VerifyEmail() {
           </div>
         )}
 
-        {successMsg && (
-          <div className="animate-fade-in-up" style={{ 
-            background: 'rgba(29, 158, 117, 0.1)', border: '1px solid rgba(29, 158, 117, 0.2)',
-            color: 'var(--tf-green)', fontSize: '12px', padding: '10px 14px', borderRadius: '8px', 
-            marginBottom: '20px', textAlign: 'center' 
-          }}>
-            {successMsg}
-          </div>
-        )}
+
 
         <button
           type="submit"
-          disabled={loading || verifying}
+          disabled={loading}
           className="btn-modern primary"
           style={{ marginBottom: '20px' }}
         >
-          {loading || verifying ? (
+          {loading ? (
             <><div className="animate-spin" style={{width: '16px', height: '16px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%'}} /> Verifying...</>
           ) : (
             <>Verify Email <ArrowRight size={16} /></>

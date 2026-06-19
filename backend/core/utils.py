@@ -1,6 +1,7 @@
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 import logging
+import threading
 from django.conf import settings
 from django.core.mail import send_mail
 
@@ -25,6 +26,22 @@ def is_disposable_email(email):
     except Exception:
         return True
 
+def _send_mail_thread(subject, message, from_email, recipient_list):
+    """Internal helper: send email in a background thread to avoid blocking the request."""
+    try:
+        send_mail(
+            subject,
+            message,
+            from_email,
+            recipient_list,
+            fail_silently=False,
+        )
+        logger.info(f"Email sent successfully to {recipient_list}")
+    except Exception as e:
+        logger.error(f"Failed to send email to {recipient_list}: {e}")
+        print(f"--- EMAIL TO {recipient_list} FAILED: {e} ---")
+        print(message)
+
 def send_verification_email(email, otp, token):
     frontend_url = getattr(settings, 'FRONTEND_URL', 'http://localhost:5173')
     verify_url = f"{frontend_url}/verify-email?email={email}&token={token}"
@@ -46,18 +63,13 @@ This code and link will expire in 15 minutes.
 If you did not request this, please ignore this email.
 """
     
-    try:
-        send_mail(
-            subject,
-            message,
-            settings.DEFAULT_FROM_EMAIL,
-            [email],
-            fail_silently=False,
-        )
-    except Exception as e:
-        logger.error(f"Failed to send email to {email}: {e}")
-        print(f"--- SENT EMAIL TO {email} (FAILED TO USE DJANGO MAIL: {e}) ---")
-        print(message)
+    # Send in background thread so SMTP latency never blocks the HTTP response
+    t = threading.Thread(
+        target=_send_mail_thread,
+        args=(subject, message, settings.DEFAULT_FROM_EMAIL, [email]),
+        daemon=True
+    )
+    t.start()
 
 def send_password_reset_email(email, otp, token):
     frontend_url = getattr(settings, 'FRONTEND_URL', 'http://localhost:5173')
@@ -79,18 +91,13 @@ If you did not request a password reset, please ignore this email.
 Your password will remain unchanged.
 """
 
-    try:
-        send_mail(
-            subject,
-            message,
-            settings.DEFAULT_FROM_EMAIL,
-            [email],
-            fail_silently=False,
-        )
-    except Exception as e:
-        logger.error(f"Failed to send password reset email to {email}: {e}")
-        print(f"--- RESET EMAIL TO {email} ---")
-        print(message)
+    # Send in background thread so SMTP latency never blocks the HTTP response
+    t = threading.Thread(
+        target=_send_mail_thread,
+        args=(subject, message, settings.DEFAULT_FROM_EMAIL, [email]),
+        daemon=True
+    )
+    t.start()
 
 
 def send_board_event(board_id, event_type, payload, sender_socket_id=None):

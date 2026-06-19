@@ -50,6 +50,8 @@ services:
         sync: false
       - key: GITHUB_CLIENT_SECRET
         sync: false
+      - key: FRONTEND_URL
+        value: "https://taskflow-frontend-w25n.onrender.com"
 
   # ─── React Frontend ────────────────────────────────────────────────────
   - type: web
