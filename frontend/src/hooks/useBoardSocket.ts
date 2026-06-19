@@ -15,7 +15,9 @@ export function useBoardSocket(boardId: string | undefined, token: string | null
 
         const connect = () => {
             if (!active) return;
-            const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+            const isProd = import.meta.env.PROD;
+            const fallbackProdUrl = 'https://taskflow-backend-cj9v.onrender.com/api';
+            const apiBase = import.meta.env.VITE_API_URL || (isProd ? fallbackProdUrl : 'http://localhost:8000/api');
             const wsProtocol = apiBase.startsWith('https') ? 'wss:' : 'ws:';
             const wsHost = new URL(apiBase, window.location.origin).host;
             const ws = new WebSocket(`${wsProtocol}//${wsHost}/ws/board/${boardId}/?token=${token}`);
