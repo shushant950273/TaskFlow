@@ -8,16 +8,6 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: false,      // Don't expose source maps in production
-    rollupOptions: {
-      output: {
-        // Split vendor libraries for better caching
-        manualChunks: {
-          react: ['react', 'react-dom'],
-          router: ['react-router-dom'],
-          query: ['@tanstack/react-query'],
-        },
-      },
-    },
   },
   server: {
     // Development proxy — so you don't need CORS in dev
