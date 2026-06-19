@@ -37,11 +37,11 @@ services:
       - key: EMAIL_USE_TLS
         value: "True"
       - key: EMAIL_HOST_USER
-        sync: false
+        sync: false   # Set this in Render Dashboard: your Brevo SMTP login (e.g. abc@smtp-brevo.com)
       - key: EMAIL_HOST_PASSWORD
-        sync: false
+        sync: false   # Set this in Render Dashboard: your Brevo SMTP key
       - key: DEFAULT_FROM_EMAIL
-        value: "TaskFlow <noreply@taskflow.app>"
+        value: "TaskFlow <shushantpes@gmail.com>"
       - key: GOOGLE_CLIENT_ID
         sync: false
       - key: GOOGLE_CLIENT_SECRET

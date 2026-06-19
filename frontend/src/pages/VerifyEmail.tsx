@@ -4,6 +4,21 @@ import { useAuthStore } from '../store/useAuthStore';
 import { useToastStore } from '../store/useToastStore';
 import { Mail, KeyRound, Loader2, ArrowRight } from 'lucide-react';
 
+/** Safely turn any DRF/custom-renderer error payload into a plain string. */
+function extractErrorMessage(err: any, fallback: string): string {
+  const raw = err?.response?.data?.error ?? err?.response?.data;
+  if (!raw) return fallback;
+  if (typeof raw === 'string') return raw;
+  if (typeof raw === 'object') {
+    // DRF field-level errors: { email: ['msg'] } or { detail: 'msg' }
+    const firstVal = Object.values(raw)[0];
+    if (Array.isArray(firstVal)) return String(firstVal[0]);
+    if (typeof firstVal === 'string') return firstVal;
+    return JSON.stringify(raw);
+  }
+  return fallback;
+}
+
 export default function VerifyEmail() {
   const [searchParams] = useSearchParams();
   const emailParam = searchParams.get('email') || '';
@@ -36,7 +51,7 @@ export default function VerifyEmail() {
           addToast('Email verified successfully! Welcome to TaskFlow.', 'success');
           navigate('/boards');
         } catch (err: any) {
-          const errMsg = err?.response?.data?.error || 'Verification failed. The link may have expired or is invalid.';
+          const errMsg = extractErrorMessage(err, 'Verification failed. The link may have expired or is invalid.');
           setError(errMsg);
           addToast(errMsg, 'error');
         } finally {
@@ -68,7 +83,7 @@ export default function VerifyEmail() {
       addToast('Email verified successfully! Welcome to TaskFlow.', 'success');
       navigate('/boards');
     } catch (err: any) {
-      const errMsg = err?.response?.data?.error || 'Verification failed. Please check the code and try again.';
+      const errMsg = extractErrorMessage(err, 'Verification failed. Please check the code and try again.');
       setError(errMsg);
       addToast(errMsg, 'error');
     } finally {
@@ -86,7 +101,7 @@ export default function VerifyEmail() {
       addToast('Verification code resent. Please check your inbox.', 'success');
       setCooldown(30);
     } catch (err: any) {
-      const errMsg = err?.response?.data?.error || 'Failed to resend code. Please try again.';
+      const errMsg = extractErrorMessage(err, 'Failed to resend code. Please try again.');
       setError(errMsg);
       addToast(errMsg, 'error');
     } finally {
