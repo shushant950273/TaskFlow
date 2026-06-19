@@ -15,7 +15,10 @@ export function useBoardSocket(boardId: string | undefined, token: string | null
 
         const connect = () => {
             if (!active) return;
-            const ws = new WebSocket(`ws://localhost:8000/ws/board/${boardId}/?token=${token}`);
+            const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+            const wsProtocol = apiBase.startsWith('https') ? 'wss:' : 'ws:';
+            const wsHost = new URL(apiBase, window.location.origin).host;
+            const ws = new WebSocket(`${wsProtocol}//${wsHost}/ws/board/${boardId}/?token=${token}`);
             wsRef.current = ws;
             ws.onopen = () => {
                 if (active) { setIsConnected(true); backoffRef.current = 2000; }
