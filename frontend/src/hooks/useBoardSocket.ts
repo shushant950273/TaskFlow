@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { useBoardStore } from '../store/boardStore';
+import { useQueryClient } from '@tanstack/react-query';
 
 export const clientSocketId = crypto.randomUUID();
 
 export function useBoardSocket(boardId: string | undefined, token: string | null) {
     const [isConnected, setIsConnected] = useState(false);
     const store = useBoardStore();
+    const queryClient = useQueryClient();
     const wsRef = useRef<WebSocket | null>(null);
     const backoffRef = useRef(2000);
 
@@ -34,6 +36,9 @@ export function useBoardSocket(boardId: string | undefined, token: string | null
                 else if (type === 'task.moved') store.moveTaskOptimistic(payload.task_id, payload.from_column_id, payload.to_column_id, payload.new_order);
                 else if (type === 'task.deleted') store.deleteTask(payload.task_id);
                 else if (type === 'column.reordered') store.reorderColumns(payload.ordered_ids);
+                
+                // Force react query to refetch in the background to guarantee UI is perfectly in sync
+                queryClient.invalidateQueries({ queryKey: ['tasks', boardId] });
             };
             ws.onclose = () => {
                 setIsConnected(false);
@@ -45,7 +50,7 @@ export function useBoardSocket(boardId: string | undefined, token: string | null
         };
         connect();
         return () => { active = false; wsRef.current?.close(); };
-    }, [boardId, token]);
+    }, [boardId, token, queryClient]);
 
     return { isConnected };
 }

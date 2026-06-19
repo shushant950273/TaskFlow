@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
     DndContext, DragOverlay, PointerSensor, useSensor, useSensors, closestCorners,
 } from '@dnd-kit/core';
@@ -52,6 +52,7 @@ function taskMatchesFilters(task: any, filters: BoardFilters): boolean {
 
 export default function Board() {
     const { id: boardId } = useParams<{ id: string }>();
+    const queryClient = useQueryClient();
     const { accessToken } = useAuthStore();
     const {
         board, columns, tasksByColumn, setBoard, setColumns, setTasks,
@@ -169,10 +170,12 @@ export default function Board() {
         try {
             const task = await createTask(boardId, { title, column: colId });
             addTask(task);
+            // Invalidate the cache forcefully to guarantee the UI syncs properly
+            queryClient.invalidateQueries({ queryKey: ['tasks', boardId] });
         } catch (err) {
             console.error('Failed to add task', err);
         }
-    }, [boardId, addTask]);
+    }, [boardId, addTask, queryClient]);
 
     const handleFilterChange = useCallback((key: keyof BoardFilters, value: string | undefined) => {
         setFilters(prev => ({ ...prev, [key]: value }));
