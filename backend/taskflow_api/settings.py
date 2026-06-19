@@ -134,11 +134,11 @@ SIMPLE_JWT = {
 # ─── CORS ─────────────────────────────────────────────────────────────────
 # In development set CORS_ALLOW_ALL_ORIGINS=True in .env
 # In production set CORS_ALLOWED_ORIGINS=https://your-frontend.onrender.com
-if DEBUG:
-    CORS_ALLOW_ALL_ORIGINS = True
-else:
-    CORS_ALLOW_ALL_ORIGINS = False
-    CORS_ALLOWED_ORIGINS_ENV = os.environ.get('CORS_ALLOWED_ORIGINS', '')
+# We unconditionally allow all CORS origins because the backend is protected by JWT tokens,
+# and it prevents CORS issues if the frontend URL changes or is misconfigured in Render.
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS_ENV = os.environ.get('CORS_ALLOWED_ORIGINS', '')
+if CORS_ALLOWED_ORIGINS_ENV:
     CORS_ALLOWED_ORIGINS = [o.strip() for o in CORS_ALLOWED_ORIGINS_ENV.split(',') if o.strip()]
 
 from corsheaders.defaults import default_headers
