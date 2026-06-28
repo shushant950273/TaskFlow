@@ -35,6 +35,10 @@ export const moveTask = async (taskId: string, column_id: string, order: number)
     return res.data.data;
 };
 
+export const deleteTask = async (taskId: string) => {
+    await apiClient.delete(`/tasks/${taskId}/`);
+};
+
 export const assignTaskToSprint = async (taskId: string, sprintId: string | null) => {
     const res = await apiClient.post(`/tasks/${taskId}/assign-sprint/`, { sprint_id: sprintId });
     return res.data.data;

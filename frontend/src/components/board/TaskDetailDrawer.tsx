@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { X, Check, CheckSquare, Square, Plus, Tag, UserPlus, Trash2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { getTaskDetail, patchTask, createSubtask, patchSubtask } from '../../api/taskDetailApi';
-import { getBoardLabels } from '../../api/tasksApi';
+import { getBoardLabels, deleteTask } from '../../api/tasksApi';
 import { useBoardStore } from '../../store/boardStore';
 
 const PRIORITIES = [
@@ -94,6 +94,20 @@ export default function TaskDetailDrawer({ taskId, onClose }: { taskId: string |
             qc.setQueryData(['task-detail', taskId], data);
         },
     });
+
+    const deleteMutation = useMutation({
+        mutationFn: () => deleteTask(taskId!),
+        onSuccess: () => {
+            qc.invalidateQueries({ queryKey: ['tasks'] });
+            onClose();
+        }
+    });
+
+    const handleDelete = () => {
+        if (window.confirm("Are you sure you want to delete this task? This action cannot be undone.")) {
+            deleteMutation.mutate();
+        }
+    };
 
     const debouncedTitle = useDebounce(title, 500);
     const debouncedDesc = useDebounce(description, 500);
@@ -187,9 +201,14 @@ export default function TaskDetailDrawer({ taskId, onClose }: { taskId: string |
                                                 padding: 0, overflow: 'hidden'
                                             }}
                                         />
-                                        <button onClick={onClose} style={{ background: 'var(--tf-surface2)', border: '1px solid var(--tf-border)', cursor: 'pointer', color: 'var(--tf-text-secondary)', padding: '6px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                            <X size={18} />
-                                        </button>
+                                        <div style={{ display: 'flex', gap: '8px' }}>
+                                            <button onClick={handleDelete} title="Delete Task" style={{ background: 'var(--tf-surface2)', border: '1px solid var(--tf-border)', cursor: 'pointer', color: 'var(--tf-red)', padding: '6px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                <Trash2 size={18} />
+                                            </button>
+                                            <button onClick={onClose} title="Close" style={{ background: 'var(--tf-surface2)', border: '1px solid var(--tf-border)', cursor: 'pointer', color: 'var(--tf-text-secondary)', padding: '6px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                <X size={18} />
+                                            </button>
+                                        </div>
                                     </div>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                         {PRIORITIES.map(p => (
