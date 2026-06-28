@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
-import { KeyRound, Loader2, ArrowRight } from 'lucide-react';
+import { KeyRound, Loader2, ArrowRight, Eye, EyeOff } from 'lucide-react';
 import apiClient from '../api/axios';
 import { useToastStore } from '../store/useToastStore';
 
@@ -16,6 +16,8 @@ export default function ResetPassword() {
   const [otp, setOtp] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -126,28 +128,40 @@ export default function ResetPassword() {
           <label style={{ display: 'block', fontSize: '12px', fontWeight: 500, color: 'var(--tf-text-secondary)', marginBottom: '8px' }}>
             New Password
           </label>
-          <input 
-            type="password" 
-            required minLength={8}
-            className="input-modern"
-            placeholder="••••••••"
-            value={password} 
-            onChange={e => setPassword(e.target.value)} 
-          />
+          <div style={{ position: 'relative' }}>
+            <input 
+              type={showPassword ? "text" : "password"} 
+              required minLength={8}
+              className="input-modern"
+              placeholder="••••••••"
+              value={password} 
+              onChange={e => setPassword(e.target.value)} 
+              style={{ paddingRight: '40px' }}
+            />
+            <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--tf-text-tertiary)', padding: 0, display: 'flex' }}>
+              {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+            </button>
+          </div>
         </div>
 
         <div style={{ marginBottom: '24px' }}>
           <label style={{ display: 'block', fontSize: '12px', fontWeight: 500, color: 'var(--tf-text-secondary)', marginBottom: '8px' }}>
             Confirm New Password
           </label>
-          <input 
-            type="password" 
-            required minLength={8}
-            className="input-modern"
-            placeholder="••••••••"
-            value={confirmPassword} 
-            onChange={e => setConfirmPassword(e.target.value)} 
-          />
+          <div style={{ position: 'relative' }}>
+            <input 
+              type={showConfirm ? "text" : "password"} 
+              required minLength={8}
+              className="input-modern"
+              placeholder="••••••••"
+              value={confirmPassword} 
+              onChange={e => setConfirmPassword(e.target.value)} 
+              style={{ paddingRight: '40px' }}
+            />
+            <button type="button" onClick={() => setShowConfirm(!showConfirm)} style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--tf-text-tertiary)', padding: 0, display: 'flex' }}>
+              {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
+            </button>
+          </div>
         </div>
 
         {error && (
