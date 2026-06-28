@@ -20,6 +20,14 @@ function useDebounce<T>(value: T, delay: number): T {
     return dv;
 }
 
+const getTodayDateString = () => {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+};
+
 function SaveStatus({ status }: { status: 'idle' | 'saving' | 'saved' }) {
     if (status === 'idle') return null;
     return (
@@ -106,12 +114,18 @@ export default function TaskDetailDrawer({ taskId, onClose }: { taskId: string |
     useEffect(() => { if (task) initialised.current = true; }, [task]);
 
     const handlePriority = (p: string) => { setPriority(p); patch.mutate({ priority: p }); };
-    const handleDueDate = (val: string) => { setDueDate(val); patch.mutate({ due_date: val || null }); };
+    const handleDueDate = (val: string) => { 
+        const minDate = getTodayDateString();
+        if (val && val < minDate) val = minDate;
+        setDueDate(val); 
+        patch.mutate({ due_date: val || null }); 
+    };
 
     const toggleSubtask = async (sub: any) => {
         setSubtasks(prev => prev.map(s => s.id === sub.id ? { ...s, is_done: !s.is_done } : s));
         await patchSubtask(taskId!, sub.id, { is_done: !sub.is_done });
         qc.invalidateQueries({ queryKey: ['task-detail', taskId] });
+        qc.invalidateQueries({ queryKey: ['tasks'] });
     };
 
     const addSubtask = async () => {
@@ -119,6 +133,8 @@ export default function TaskDetailDrawer({ taskId, onClose }: { taskId: string |
         const sub = await createSubtask(taskId!, newSubtask.trim());
         setSubtasks(prev => [...prev, sub]);
         setNewSubtask('');
+        qc.invalidateQueries({ queryKey: ['task-detail', taskId] });
+        qc.invalidateQueries({ queryKey: ['tasks'] });
     };
 
     const toggleAssignee = (userId: string) => {
@@ -141,14 +157,14 @@ export default function TaskDetailDrawer({ taskId, onClose }: { taskId: string |
             {taskId && (
                 <>
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose}
-                        style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 40, backdropFilter: 'blur(3px)' }} />
+                        style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 400, backdropFilter: 'blur(3px)' }} />
 
                     <motion.div initial={{ x: 440 }} animate={{ x: 0 }} exit={{ x: 440 }}
                         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                         style={{
                             position: 'fixed', top: 0, right: 0, bottom: 0, width: '440px',
                             background: 'var(--tf-surface)', borderLeft: '1px solid var(--tf-border)',
-                            zIndex: 50, display: 'flex', flexDirection: 'column', overflowY: 'auto',
+                            zIndex: 500, display: 'flex', flexDirection: 'column', overflowY: 'auto',
                             boxShadow: '-10px 0 40px rgba(0,0,0,0.5)'
                         }}
                     >
@@ -167,7 +183,8 @@ export default function TaskDetailDrawer({ taskId, onClose }: { taskId: string |
                                             style={{
                                                 flex: 1, background: 'none', border: 'none', outline: 'none',
                                                 color: 'var(--tf-text)', fontFamily: 'var(--font-heading)', fontWeight: 600,
-                                                fontSize: '20px', lineHeight: 1.4, resize: 'none', marginRight: '16px'
+                                                fontSize: '20px', lineHeight: 1.4, resize: 'none', marginRight: '16px',
+                                                padding: 0, overflow: 'hidden'
                                             }}
                                         />
                                         <button onClick={onClose} style={{ background: 'var(--tf-surface2)', border: '1px solid var(--tf-border)', cursor: 'pointer', color: 'var(--tf-text-secondary)', padding: '6px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -263,8 +280,8 @@ export default function TaskDetailDrawer({ taskId, onClose }: { taskId: string |
                                     {/* Due Date */}
                                     <div>
                                         <div style={{ fontSize: '11px', color: 'var(--tf-text-tertiary)', textTransform: 'uppercase', marginBottom: '12px', letterSpacing: '0.05em', fontWeight: 600, fontFamily: 'var(--font-body)' }}>Due Date</div>
-                                        <input type='date' value={dueDate} onChange={e => handleDueDate(e.target.value)}
-                                            style={{ background: 'var(--tf-surface2)', border: '1px solid var(--tf-border)', borderRadius: '8px', padding: '8px 12px', color: 'var(--tf-text)', outline: 'none', colorScheme: 'dark', fontFamily: 'var(--font-body)', fontSize: '13px' }} />
+                                        <input type='date' value={dueDate} min={getTodayDateString()} onChange={e => handleDueDate(e.target.value)}
+                                            style={{ background: 'var(--tf-surface2)', border: '1px solid var(--tf-border)', borderRadius: '8px', padding: '8px 12px', color: 'var(--tf-text)', outline: 'none', fontFamily: 'var(--font-body)', fontSize: '13px' }} />
                                     </div>
                                 </div>
 
@@ -316,7 +333,7 @@ export default function TaskDetailDrawer({ taskId, onClose }: { taskId: string |
                                     <div style={{ display: 'flex', gap: '8px' }}>
                                         <input value={newSubtask} onChange={e => setNewSubtask(e.target.value)} onKeyDown={e => e.key === 'Enter' && addSubtask()}
                                             placeholder='+ Add subtask' style={{ flex: 1, background: 'var(--tf-surface2)', border: '1px solid var(--tf-border)', borderRadius: '8px', outline: 'none', color: 'var(--tf-text)', fontSize: '13px', padding: '10px 14px' }} />
-                                        {newSubtask && <button onClick={addSubtask} style={{ background: 'var(--tf-accent)', border: 'none', borderRadius: '8px', padding: '0 14px', color: '#fff', cursor: 'pointer' }}><Plus size={16} /></button>}
+                                        {newSubtask && <button onClick={addSubtask} style={{ background: 'var(--tf-accent)', border: 'none', borderRadius: '8px', padding: '0 14px', height: '38px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', cursor: 'pointer' }}><Plus size={16} /></button>}
                                     </div>
                                 </div>
 

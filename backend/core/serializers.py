@@ -108,6 +108,7 @@ class SubTaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = SubTask
         fields = ['id', 'title', 'is_done', 'order']
+        read_only_fields = ['order']
 
 class LabelSerializer(serializers.ModelSerializer):
     class Meta:

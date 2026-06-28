@@ -124,7 +124,7 @@ export default function BoardSettingsModal({ onClose }: { onClose: () => void })
                                 <label style={{ display: 'block', fontSize: '12px', color: 'var(--tf-text-secondary)', textTransform: 'uppercase', marginBottom: '8px', fontWeight: 600, fontFamily: 'var(--font-body)' }}>Board Name</label>
                                 <div style={{ display: 'flex', gap: '10px' }}>
                                     <input value={name} onChange={e => setName(e.target.value)} style={{ flex: 1, background: 'var(--tf-surface2)', border: '0.5px solid var(--tf-border)', borderRadius: '8px', padding: '10px 14px', color: 'var(--tf-text)', outline: 'none', fontFamily: 'var(--font-body)', fontSize: '14px' }} />
-                                    <button onClick={handleUpdate} style={{ background: 'var(--tf-accent)', border: 'none', borderRadius: '8px', padding: '0 20px', color: '#fff', cursor: 'pointer', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px', fontFamily: 'var(--font-body)' }}><Save size={16} /> Save</button>
+                                    <button onClick={handleUpdate} style={{ background: 'var(--tf-accent)', border: 'none', borderRadius: '8px', padding: '10px 20px', color: '#fff', cursor: 'pointer', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px', fontFamily: 'var(--font-body)' }}><Save size={16} /> Save</button>
                                 </div>
                             </div>
 
@@ -174,14 +174,22 @@ export default function BoardSettingsModal({ onClose }: { onClose: () => void })
 
                     {tab === 'labels' && (
                         <div>
-                            <div style={{ display: 'flex', gap: '10px', marginBottom: '32px' }}>
-                                <input placeholder='Label name...' value={newLabelName} onChange={e => setNewLabelName(e.target.value)} style={{ flex: 1, background: 'var(--tf-surface2)', border: '0.5px solid var(--tf-border)', borderRadius: '8px', padding: '10px 14px', color: 'var(--tf-text)', outline: 'none', fontFamily: 'var(--font-body)', fontSize: '14px' }} />
-                                <div style={{ display: 'flex', gap: '6px', padding: '6px', background: 'var(--tf-surface2)', border: '0.5px solid var(--tf-border)', borderRadius: '8px' }}>
-                                    {LABEL_COLORS.map(c => (
-                                        <button type="button" key={c} onClick={() => setNewLabelColor(c)} style={{ width: '28px', height: '28px', borderRadius: '6px', background: c, border: newLabelColor === c ? '2px solid #fff' : '2px solid transparent', cursor: 'pointer', transition: 'border-color 0.2s' }} />
-                                    ))}
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '32px' }}>
+                                <div>
+                                    <label style={{ display: 'block', fontSize: '11px', color: 'var(--tf-text-secondary)', textTransform: 'uppercase', marginBottom: '8px', fontWeight: 600, fontFamily: 'var(--font-body)', letterSpacing: '0.05em' }}>Label Name</label>
+                                    <input placeholder='Label name...' value={newLabelName} onChange={e => setNewLabelName(e.target.value)} style={{ width: '100%', background: 'var(--tf-surface2)', border: '0.5px solid var(--tf-border)', borderRadius: '8px', padding: '10px 14px', color: 'var(--tf-text)', outline: 'none', fontFamily: 'var(--font-body)', fontSize: '14px' }} />
                                 </div>
-                                <button type="button" onClick={handleCreateLabel} style={{ background: 'var(--tf-accent)', border: 'none', borderRadius: '8px', padding: '0 20px', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 600, fontFamily: 'var(--font-body)' }}><Save size={16} /> Save</button>
+                                <div>
+                                    <label style={{ display: 'block', fontSize: '11px', color: 'var(--tf-text-secondary)', textTransform: 'uppercase', marginBottom: '8px', fontWeight: 600, fontFamily: 'var(--font-body)', letterSpacing: '0.05em' }}>Label Color</label>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+                                        <div style={{ display: 'flex', gap: '6px', padding: '6px', background: 'var(--tf-surface2)', border: '0.5px solid var(--tf-border)', borderRadius: '8px' }}>
+                                            {LABEL_COLORS.map(c => (
+                                                <button type="button" key={c} onClick={() => setNewLabelColor(c)} style={{ width: '28px', height: '28px', borderRadius: '6px', background: c, border: newLabelColor === c ? '2px solid #fff' : '2px solid transparent', cursor: 'pointer', transition: 'border-color 0.2s', padding: 0 }} />
+                                            ))}
+                                        </div>
+                                        <button type="button" onClick={handleCreateLabel} style={{ background: 'var(--tf-accent)', border: 'none', borderRadius: '8px', padding: '0 24px', height: '40px', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 600, fontFamily: 'var(--font-body)' }}><Save size={16} /> Save</button>
+                                    </div>
+                                </div>
                             </div>
 
                             <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>

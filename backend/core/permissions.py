@@ -5,6 +5,9 @@ class IsBoardMember(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         # Determine board
         board = obj if isinstance(obj, Board) else getattr(obj, 'board', None)
+        if not board and hasattr(obj, 'task'):
+            board = getattr(obj.task, 'board', None)
+            
         if not board:
             return False
             

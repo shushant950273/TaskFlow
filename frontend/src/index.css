@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Inter:wght@400;500;600&family=Syne:wght@600;700&display=swap');
 
 :root {
+  color-scheme: dark;
   /* Colors */
   --tf-bg: #0a0a0f;
   --tf-surface: #111118;
@@ -38,6 +39,7 @@
 }
 
 [data-theme="light"] {
+  color-scheme: light;
   --tf-bg: #f5f6f8;
   --tf-surface: #ffffff;
   --tf-surface2: #f0f1f4;
@@ -130,6 +132,15 @@ input:focus, select:focus, textarea:focus {
 
 input::placeholder, textarea::placeholder {
   color: var(--tf-text-tertiary);
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.8);
+  cursor: pointer;
+}
+
+[data-theme="light"] input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: none;
 }
 
 textarea {

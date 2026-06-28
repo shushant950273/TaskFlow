@@ -8,6 +8,14 @@ import { BoardSkeleton } from '../components/ui/Skeleton';
 import Navbar from '../components/ui/Navbar';
 import { useToastStore } from '../store/useToastStore';
 
+const getTodayDateString = () => {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+};
+
 export default function Sprints() {
     const { id: boardId } = useParams<{ id: string }>();
     const queryClient = useQueryClient();
@@ -98,7 +106,7 @@ export default function Sprints() {
                 <div style={{ width: '280px', borderRight: '0.5px solid var(--tf-border)', display: 'flex', flexDirection: 'column', background: 'var(--tf-surface)' }}>
                     <div style={{ padding: '24px 20px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <h3 style={{ fontSize: '14px', fontWeight: 600, fontFamily: 'var(--font-heading)', color: 'var(--tf-text)' }}>Sprints</h3>
-                        <button onClick={() => setShowNewModal(true)} style={{ background: 'var(--tf-surface2)', border: '0.5px solid var(--tf-border)', color: 'var(--tf-text-secondary)', cursor: 'pointer', width: '28px', height: '28px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <button onClick={() => setShowNewModal(true)} style={{ background: 'var(--tf-surface2)', border: '0.5px solid var(--tf-border)', color: 'var(--tf-text-secondary)', cursor: 'pointer', width: '28px', height: '28px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}>
                             <Plus size={16} />
                         </button>
                     </div>
@@ -237,13 +245,23 @@ export default function Sprints() {
                             <div style={{ display: 'flex', gap: '16px', marginBottom: '32px' }}>
                                 <div style={{ flex: 1 }}>
                                     <label style={{ display: 'block', marginBottom: '8px', fontSize: '12px', color: 'var(--tf-text-secondary)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Start Date</label>
-                                    <input type="date" required value={newSprint.start_date} onChange={e => setNewSprint({ ...newSprint, start_date: e.target.value })} 
-                                        style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '0.5px solid var(--tf-border)', background: 'var(--tf-surface2)', color: 'var(--tf-text)', outline: 'none', fontFamily: 'var(--font-body)', fontSize: '14px', colorScheme: 'dark' }} />
+                                    <input type="date" required value={newSprint.start_date} min={getTodayDateString()} onChange={e => {
+                                        let val = e.target.value;
+                                        const minDate = getTodayDateString();
+                                        if (val && val < minDate) val = minDate;
+                                        setNewSprint({ ...newSprint, start_date: val });
+                                    }} 
+                                        style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '0.5px solid var(--tf-border)', background: 'var(--tf-surface2)', color: 'var(--tf-text)', outline: 'none', fontFamily: 'var(--font-body)', fontSize: '14px' }} />
                                 </div>
                                 <div style={{ flex: 1 }}>
                                     <label style={{ display: 'block', marginBottom: '8px', fontSize: '12px', color: 'var(--tf-text-secondary)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>End Date</label>
-                                    <input type="date" required value={newSprint.end_date} onChange={e => setNewSprint({ ...newSprint, end_date: e.target.value })} 
-                                        style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '0.5px solid var(--tf-border)', background: 'var(--tf-surface2)', color: 'var(--tf-text)', outline: 'none', fontFamily: 'var(--font-body)', fontSize: '14px', colorScheme: 'dark' }} />
+                                    <input type="date" required value={newSprint.end_date} min={newSprint.start_date || getTodayDateString()} onChange={e => {
+                                        let val = e.target.value;
+                                        const minDate = newSprint.start_date || getTodayDateString();
+                                        if (val && val < minDate) val = minDate;
+                                        setNewSprint({ ...newSprint, end_date: val });
+                                    }} 
+                                        style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '0.5px solid var(--tf-border)', background: 'var(--tf-surface2)', color: 'var(--tf-text)', outline: 'none', fontFamily: 'var(--font-body)', fontSize: '14px' }} />
                                 </div>
                             </div>
                             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
