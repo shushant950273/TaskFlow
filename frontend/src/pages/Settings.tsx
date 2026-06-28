@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, Bell, Palette, Shield, Layers, ChevronLeft, Eye, EyeOff, Check } from 'lucide-react';
+import { User, Bell, Layers, ChevronLeft, Check } from 'lucide-react';
 import { useAuthStore } from '../store/useAuthStore';
-import { updateProfile, changePassword } from '../api/settingsApi';
+import { updateProfile } from '../api/settingsApi';
 import { useToastStore } from '../store/useToastStore';
 
 const AVATAR_COLORS: { key: string; hex: string; label: string }[] = [
@@ -18,8 +18,6 @@ const AVATAR_COLORS: { key: string; hex: string; label: string }[] = [
 const TABS = [
   { id: 'profile',       label: 'Profile',       icon: User },
   { id: 'notifications', label: 'Notifications',  icon: Bell },
-  { id: 'appearance',    label: 'Appearance',     icon: Palette },
-  { id: 'security',      label: 'Security',       icon: Shield },
 ];
 
 /* ── tiny helpers ── */
@@ -114,39 +112,7 @@ export default function Settings() {
     addToast('Preference saved', 'success');
   };
 
-  /* ── Appearance ── */
-  const [theme, setTheme] = useState(() => localStorage.getItem('tf_theme') || 'dark');
-  const [compact, setCompact] = useState(() => localStorage.getItem('tf_compact') === 'true');
-  const [boardView, setBoardView] = useState(() => localStorage.getItem('tf_board_view') || 'kanban');
 
-  const saveAppearance = (key: string, val: string | boolean) => {
-    localStorage.setItem(key, String(val));
-    addToast('Preference saved', 'success');
-  };
-
-  /* ── Security ── */
-  const [curPwd, setCurPwd] = useState('');
-  const [newPwd, setNewPwd] = useState('');
-  const [confirmPwd, setConfirmPwd] = useState('');
-  const [showPwd, setShowPwd] = useState(false);
-  const [pwdLoading, setPwdLoading] = useState(false);
-  const [pwdError, setPwdError] = useState('');
-
-  const handleChangePassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setPwdError('');
-    setPwdLoading(true);
-    try {
-      await changePassword({ current_password: curPwd, new_password: newPwd, confirm_password: confirmPwd });
-      addToast('Password updated!', 'success');
-      setCurPwd(''); setNewPwd(''); setConfirmPwd('');
-    } catch (err: any) {
-      const msg = err?.response?.data?.error || err?.response?.data?.data?.error || 'Failed to update password.';
-      setPwdError(msg);
-    } finally {
-      setPwdLoading(false);
-    }
-  };
 
   /* ── focus border util ── */
   const onFocus = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) =>
@@ -331,167 +297,7 @@ export default function Settings() {
                 </div>
               )}
 
-              {/* ════════ APPEARANCE ════════ */}
-              {tab === 'appearance' && (
-                <div>
-                  <h1 style={{ fontFamily: "'Syne', sans-serif", fontSize: 22, fontWeight: 700, marginBottom: 4 }}>Appearance</h1>
-                  <p style={{ color: 'var(--text-muted)', fontSize: 14, marginBottom: 32 }}>Customize how TaskFlow looks for you</p>
 
-                  {/* Theme */}
-                  <div style={{ marginBottom: 32 }}>
-                    <label style={{ display: 'block', fontSize: 12, color: 'var(--text-muted)', fontWeight: 500, marginBottom: 16, textTransform: 'uppercase', letterSpacing: '.06em' }}>Theme</label>
-                    <div style={{ display: 'flex', gap: 12 }}>
-                      {['light', 'dark', 'auto'].map(t => (
-                        <label key={t} id={`theme-option-${t}`} style={{
-                          flex: 1, background: theme === t ? 'var(--tf-accent-glow)' : 'var(--tf-surface2)',
-                          border: `1px solid ${theme === t ? 'var(--tf-accent)' : 'var(--tf-border)'}`,
-                          borderRadius: 10, padding: '14px 18px', cursor: 'pointer',
-                          display: 'flex', alignItems: 'center', gap: 10, transition: 'all .2s',
-                        }}>
-                          <input type="radio" name="theme" value={t} checked={theme === t}
-                            onChange={() => { setTheme(t); saveAppearance('tf_theme', t); }}
-                            style={{ accentColor: 'var(--accent)', width: 16, height: 16 }} />
-                          <span style={{ fontSize: 14, fontWeight: 500, textTransform: 'capitalize' }}>{t}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Compact */}
-                  <div style={{
-                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                    padding: '18px 20px', background: 'var(--tf-surface2)',
-                    border: '1px solid var(--tf-border)', borderRadius: 10, marginBottom: 24,
-                  }}>
-                    <div>
-                      <p style={{ fontSize: 14, fontWeight: 500 }}>Compact mode</p>
-                      <p style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>Reduce spacing between elements</p>
-                    </div>
-                    <Toggle checked={compact} onChange={v => { setCompact(v); saveAppearance('tf_compact', v); }} />
-                  </div>
-
-                  {/* Default board view */}
-                  <div>
-                    <label style={{ display: 'block', fontSize: 12, color: 'var(--text-muted)', fontWeight: 500, marginBottom: 10, textTransform: 'uppercase', letterSpacing: '.06em' }}>
-                      Default Board View
-                    </label>
-                    <select
-                      id="settings-default-view"
-                      value={boardView}
-                      onChange={e => { setBoardView(e.target.value); saveAppearance('tf_board_view', e.target.value); }}
-                      onFocus={onFocus as any}
-                      onBlur={onBlur as any}
-                      style={{ ...inp, appearance: 'none', cursor: 'pointer', backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.4)' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E\")", backgroundRepeat: 'no-repeat', backgroundPosition: 'right 14px center' }}
-                    >
-                      <option value="kanban">Kanban</option>
-                      <option value="list">List</option>
-                      <option value="calendar">Calendar</option>
-                    </select>
-                  </div>
-                </div>
-              )}
-
-              {/* ════════ SECURITY ════════ */}
-              {tab === 'security' && (
-                <div>
-                  <h1 style={{ fontFamily: "'Syne', sans-serif", fontSize: 22, fontWeight: 700, marginBottom: 4 }}>Security</h1>
-                  <p style={{ color: 'var(--text-muted)', fontSize: 14, marginBottom: 32 }}>Manage your password and connected accounts</p>
-
-                  {/* Change password */}
-                  <div style={{ background: 'var(--tf-surface2)', border: '1px solid var(--tf-border)', borderRadius: 12, padding: 24, marginBottom: 28 }}>
-                    <h2 style={{ fontFamily: "'Syne', sans-serif", fontSize: 16, fontWeight: 700, marginBottom: 20 }}>Change Password</h2>
-                    <form onSubmit={handleChangePassword}>
-                      <div style={{ marginBottom: 16 }}>
-                        <label style={{ display: 'block', fontSize: 12, color: 'var(--text-muted)', marginBottom: 8 }}>Current Password</label>
-                        <div style={{ position: 'relative' }}>
-                          <input
-                            id="settings-current-password"
-                            type={showPwd ? 'text' : 'password'}
-                            value={curPwd}
-                            onChange={e => setCurPwd(e.target.value)}
-                            onFocus={onFocus}
-                            onBlur={onBlur}
-                            style={{ ...inp, paddingRight: 44 }}
-                            placeholder="Enter current password"
-                          />
-                          <button type="button" onClick={() => setShowPwd(s => !s)} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', display: 'flex' }}>
-                            {showPwd ? <EyeOff size={16} /> : <Eye size={16} />}
-                          </button>
-                        </div>
-                      </div>
-                      <div style={{ marginBottom: 16 }}>
-                        <label style={{ display: 'block', fontSize: 12, color: 'var(--text-muted)', marginBottom: 8 }}>New Password</label>
-                        <input
-                          id="settings-new-password"
-                          type={showPwd ? 'text' : 'password'}
-                          value={newPwd}
-                          onChange={e => setNewPwd(e.target.value)}
-                          onFocus={onFocus}
-                          onBlur={onBlur}
-                          style={inp}
-                          placeholder="Min. 8 characters"
-                        />
-                      </div>
-                      <div style={{ marginBottom: 20 }}>
-                        <label style={{ display: 'block', fontSize: 12, color: 'var(--text-muted)', marginBottom: 8 }}>Confirm New Password</label>
-                        <input
-                          id="settings-confirm-password"
-                          type={showPwd ? 'text' : 'password'}
-                          value={confirmPwd}
-                          onChange={e => setConfirmPwd(e.target.value)}
-                          onFocus={onFocus}
-                          onBlur={onBlur}
-                          style={inp}
-                          placeholder="Repeat new password"
-                        />
-                      </div>
-                      {pwdError && <p style={{ color: 'var(--error)', fontSize: 13, marginBottom: 14 }}>{pwdError}</p>}
-                      <button
-                        type="submit"
-                        id="settings-update-password"
-                        disabled={pwdLoading}
-                        style={{
-                          background: 'var(--accent)', color: '#fff', border: 'none', borderRadius: 8,
-                          padding: '11px 24px', fontFamily: "'Syne', sans-serif", fontWeight: 600, fontSize: 14,
-                          cursor: pwdLoading ? 'not-allowed' : 'pointer', opacity: pwdLoading ? 0.7 : 1, transition: 'all .2s',
-                        }}
-                      >
-                        {pwdLoading ? 'Updating…' : 'Update password'}
-                      </button>
-                    </form>
-                  </div>
-
-                  {/* Connected accounts */}
-                  <div style={{ background: 'var(--tf-surface2)', border: '1px solid var(--tf-border)', borderRadius: 12, padding: 24 }}>
-                    <h2 style={{ fontFamily: "'Syne', sans-serif", fontSize: 16, fontWeight: 700, marginBottom: 20 }}>Connected Accounts</h2>
-                    {[
-                      { name: 'Google', icon: '🔵', linked: false },
-                      { name: 'GitHub', icon: '⚫', linked: false },
-                    ].map(acc => (
-                      <div key={acc.name} style={{
-                        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                        padding: '14px 0', borderBottom: '1px solid rgba(255,255,255,0.05)',
-                      }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                          <span style={{ fontSize: 20 }}>{acc.icon}</span>
-                          <div>
-                            <p style={{ fontSize: 14, fontWeight: 500 }}>{acc.name}</p>
-                            <p style={{ fontSize: 12, color: 'var(--text-muted)' }}>{acc.linked ? 'Connected' : 'Not connected'}</p>
-                          </div>
-                        </div>
-                        <button style={{
-                          background: 'none',
-                          border: `1px solid ${acc.linked ? 'var(--tf-red)' : 'var(--tf-border)'}`,
-                          color: acc.linked ? 'var(--tf-red)' : 'var(--tf-text-secondary)',
-                          borderRadius: 8, padding: '7px 16px', fontSize: 13, cursor: 'pointer', transition: 'all .2s',
-                        }}>
-                          {acc.linked ? 'Disconnect' : 'Connect'}
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
 
             </motion.div>
           </AnimatePresence>
