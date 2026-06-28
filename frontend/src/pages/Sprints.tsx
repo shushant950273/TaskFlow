@@ -48,7 +48,11 @@ export default function Sprints() {
 
     const selectedSprint = sprints.find((s: any) => s.id === selectedSprintId);
     const sprintTasks = tasks.filter((t: any) => t.sprint === selectedSprintId);
-    const backlogTasks = tasks.filter((t: any) => !t.sprint);
+    const doneColumnIds = (boardData?.columns || [])
+        .filter((c: any) => c.name.toLowerCase() === 'done')
+        .map((c: any) => c.id);
+
+    const backlogTasks = tasks.filter((t: any) => !t.sprint && !doneColumnIds.includes(t.column));
 
     const createMutation = useMutation({
         mutationFn: (data: any) => createSprint(boardId!, data),
