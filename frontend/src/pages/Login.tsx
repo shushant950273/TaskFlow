@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { useAuthStore } from '../store/useAuthStore';
 import { Link, useNavigate } from 'react-router-dom';
-import { Layers } from 'lucide-react';
+import { Layers, Eye, EyeOff } from 'lucide-react';
 import apiClient from '../api/axios';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const login = useAuthStore(s => s.login);
@@ -110,14 +111,20 @@ export default function Login() {
               Forgot password?
             </Link>
           </div>
-          <input 
-            type="password" 
-            required 
-            className="input-modern"
-            placeholder="••••••••"
-            value={password} 
-            onChange={e => setPassword(e.target.value)} 
-          />
+          <div style={{ position: 'relative' }}>
+            <input 
+              type={showPassword ? "text" : "password"} 
+              required 
+              className="input-modern"
+              placeholder="••••••••"
+              value={password} 
+              onChange={e => setPassword(e.target.value)} 
+              style={{ paddingRight: '40px' }}
+            />
+            <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--tf-text-tertiary)', padding: 0, display: 'flex' }}>
+              {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+            </button>
+          </div>
         </div>
 
         {error && (
